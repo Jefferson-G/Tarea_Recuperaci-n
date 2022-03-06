@@ -1,0 +1,119 @@
+-- CREACION DE LA BASE DE DATOS
+CREATE DATABASE "Permits"
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1;
+
+
+-- TABLA PERMISO 
+CREATE TABLE IF NOT EXISTS public.permiso
+(
+    "NumeroPermiso" character varying NOT NULL,
+    "TipoPermiso" character varying(500) NOT NULL,
+    "FechaCreacionPermiso" character varying(500) NOT NULL,
+    "PermisoSitio" character varying(500) NOT NULL,
+    "FechaVencimientoPermiso" character varying(500) NOT NULL,
+    PRIMARY KEY ("NumeroPermiso"),
+    FOREIGN KEY (
+        "TipoPermiso"
+    )
+    REFERENCES tipopermiso ("TipoPermiso") ON DELETE NO ACTION
+                                  ON UPDATE NO ACTION
+);
+
+
+-- TABLA TIPO DE PERMISO 
+CREATE TABLE IF NOT EXISTS public.tipopermiso
+(
+    "TipoPermiso" character varying NOT NULL,
+    "DefinicionTipoPermiso" character varying(500) NOT NULL,
+    CONSTRAINT tipopermiso_pkey PRIMARY KEY ("TipoPermiso")
+);
+
+-- TABLA DIRECCION_LOTE
+CREATE TABLE IF NOT EXISTS public.direccionlote
+(
+    "Ubicacion" character varying NOT NULL,
+    "Cuadra" character varying(500) NOT NULL,
+    "Lote" character varying(500) NOT NULL,
+    "NumeroCalle" character varying(500) NOT NULL,
+    "SufijoNumeroCalle" character varying(500) NOT NULL,
+    "NombreCalle" character varying(500) NOT NULL,
+    "SufijoCalle" character varying(500) NOT NULL,
+    "CodigoPostal" character varying(500) NOT NULL,
+    CONSTRAINT direccionlote_pkey PRIMARY KEY ("Ubicacion")
+);
+
+-- TABLA TIPPO_CONSTRUCCION_excistente
+CREATE TABLE IF NOT EXISTS public.construccionexistente
+(
+    "TipoConstruccionExistente" character varying NOT NULL,
+    "TipoConstruccionExistenteDsecripcion" character varying(500) NOT NULL,
+    "UsoExistente" character varying(500) NOT NULL,
+    "NúmeroHistoriasExistentes" character varying(500) NOT NULL,
+    "UnidadesExistentes" character varying(500) NOT NULL,
+    CONSTRAINT construccionexistente_pkey PRIMARY KEY ("TipoConstruccionExistente")
+);
+
+-- TABLA TIPPO_CONSTRUCCION_propuesta 
+CREATE TABLE IF NOT EXISTS public.construccionpropuesta 
+(
+    "TipoConstruccionPropuesta" character varying NOT NULL,
+    "TipoConstruccionPropuestaDsecripcion" character varying(500) NOT NULL,
+    "UsoPropuesto" character varying(500) NOT NULL,
+    "NúmeroHistoriasPropuestas" character varying(500) NOT NULL,
+    "UnidadesPropuestas" character varying(500) NOT NULL,
+    CONSTRAINT construccionpropuesta _pkey PRIMARY KEY ("TipoConstruccionPropuesta")
+);
+
+-- TABLA CONSTRUCCION 
+CREATE TABLE IF NOT EXISTS public.construccion
+(
+    "IdentificacionRegistro" character varying NOT NULL,
+    "NumeroPermiso" character varying(500) NOT NULL,
+    "TipoConstruccionExistente" character varying(500) NOT NULL,
+    "TipoConstruccionPropuesta" character varying(500) NOT NULL,
+    "Ubicacion" character varying(500) NOT NULL,
+    "DistritoSupervisor" character varying(500) NOT NULL,
+    "Vecindarios" character varying(500) NOT NULL,
+    "Unidad" character varying(500) NOT NULL,
+    "SufijoUnidad" character varying(500) NOT NULL,
+    "Descripcio" character varying(500) NOT NULL,
+    "EstadoActual" character varying(500) NOT NULL,
+    "EstadoActualFecha" character varying(500) NOT NULL,
+    "CostoEstimado" character varying(500) NOT NULL,
+    "CostoRevisado" character varying(500) NOT NULL,
+    CONSTRAINT construccion_pkey PRIMARY KEY ("IdentificacionRegistro")
+);
+
+
+-- RELACIONES
+ALTER TABLE public.construccion
+    ADD CONSTRAINT fk_numeroPermiso FOREIGN KEY ("NumeroPermiso")
+    REFERENCES public.permiso ("NumeroPermiso")
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+ALTER TABLE public.construccion
+    ADD CONSTRAINT fk_tipoConstruccionE FOREIGN KEY ("TipoConstruccionExistente")
+    REFERENCES public.construccionexistente ("TipoConstruccionExistente")
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+ALTER TABLE public.construccion
+    ADD CONSTRAINT fk_tipoConstruccionP FOREIGN KEY ("TipoConstruccionPropuesta")
+    REFERENCES public.construccionpropuesta ("TipoConstruccionPropuesta")
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+ALTER TABLE public.construccion
+    ADD CONSTRAINT fk_ubicacion FOREIGN KEY ("Ubicacion")
+    REFERENCES public.direccionlote ("Ubicacion")
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
